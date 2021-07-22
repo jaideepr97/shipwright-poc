@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -15,10 +16,11 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/util/homedir"
 )
 
 var (
-	kubeConfigPath      = "/home/jrao/.kube/config"
+	kubeConfigPath      = filepath.Join(homedir.HomeDir(), ".kube", "config")
 	dockerServer        = "https://index.docker.io/v1/"
 	quayServer          = "quay.io"
 	secretName          = "image-registry-secret"
