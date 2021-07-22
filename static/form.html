@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+</head>
+<body>
+<div>
+  <form method="POST" action="/form">
+      <input type="radio" id="docker" name="image-registry" value="docker">
+      <label for="docker">Docker</label><br>
+      <input type="radio" id="quay" name="image-registry" value="quay">
+      <label for="quay">quay.io</label><br>     
+      <label> username</label><input name="username" type="text" value="" />
+      <label> password</label><input name="password" type="password" value="" />
+      <label> email</label><input name="email" type="text" value="" />
+      <label>Context Directory</label><input name="context-dir" type="text" value="" />
+      <label>Repo URL</label><input name="repo-url" type="text" value="" />
+      <input type="submit" value="submit" />
+  </form>
+</div>
+</body>
+</html>
