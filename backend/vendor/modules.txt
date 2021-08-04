@@ -2,6 +2,9 @@
 github.com/davecgh/go-spew/spew
 # github.com/go-logr/logr v0.4.0
 github.com/go-logr/logr
+# github.com/go-yaml/yaml v2.1.0+incompatible
+## explicit
+github.com/go-yaml/yaml
 # github.com/gogo/protobuf v1.3.2
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/sortkeys

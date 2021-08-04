@@ -59,8 +59,8 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 	}
-	dockerSecret := createDockerSecret(username, password, email, imageRegistryServer)
-	_, err := k8sClient.CoreV1().Secrets("default").Create(context.TODO(), dockerSecret, v1.CreateOptions{})
+	dockerSecret, err := createDockerSecret(username, password, email, imageRegistryServer)
+	_, err = k8sClient.CoreV1().Secrets("default").Create(context.TODO(), dockerSecret, v1.CreateOptions{})
 	if err != nil {
 		log.Fatal(err)
 	}
