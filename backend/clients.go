@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	shipwrightClient "github.com/shipwright-io/build/pkg/client/clientset/versioned"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -39,4 +41,22 @@ func getShipwrightClient(restConfig *rest.Config) (*shipwrightClient.Clientset, 
 	}
 
 	return shipwrightClient, nil
+}
+
+func getDiscoveryClient(restConfig *rest.Config) (*discovery.DiscoveryClient, error) {
+	discoveryClient, err := discovery.NewDiscoveryClientForConfig(restConfig)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to create discovery client object, error: %v", err)
+	}
+
+	return discoveryClient, nil
+}
+
+func getDynamicClient(restConfig *rest.Config) (dynamic.Interface, error) {
+	dynamicClient, err := dynamic.NewForConfig(restConfig)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to create dynamic client object, error: %v", err)
+	}
+
+	return dynamicClient, nil
 }

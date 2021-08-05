@@ -115,8 +115,6 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	prepareCluster()
-
 	fileServer := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fileServer)
 	http.HandleFunc("/form", formHandler)

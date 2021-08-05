@@ -5,8 +5,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
-	"log"
-	"os/exec"
 
 	shipwright "github.com/shipwright-io/build/pkg/apis/build/v1alpha1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,31 +34,6 @@ func ObjectMeta(n types.NamespacedName, opts ...objectMetaFunc) v1.ObjectMeta {
 	}
 	return om
 
-}
-
-func prepareCluster() {
-	kubectlPath, err := exec.LookPath("kubectl")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd := exec.Command(kubectlPath, "apply", "--filename", "https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.25.0/release.yaml")
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = exec.Command(kubectlPath, "apply", "--filename", "https://github.com/shipwright-io/build/releases/download/v0.5.1/release.yaml")
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cmd = exec.Command(kubectlPath, "apply", "--filename", "https://github.com/shipwright-io/build/releases/download/nightly/default_strategies.yaml")
-	err = cmd.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 // handleDockerCfgJSONContent serializes a ~/.docker/config.json file
