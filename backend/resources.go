@@ -17,7 +17,7 @@ func createDockerSecret(username, password, email, server string) (*corev1.Secre
 
 	dockerSecret := &corev1.Secret{
 		TypeMeta:   TypeMeta("Secret", "v1"),
-		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "default", Name: secretName}),
+		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: buildSystemNamespace, Name: secretName}),
 		Type:       corev1.SecretTypeDockerConfigJson,
 		Data: map[string][]byte{
 			corev1.DockerConfigJsonKey: dockerConfigJSONContent,
@@ -27,11 +27,11 @@ func createDockerSecret(username, password, email, server string) (*corev1.Secre
 	return dockerSecret, nil
 }
 
-func createBuild(imageRegistry, repoURL, username, repoName, secretName, contextDir string) *shipwright.Build {
+func createBuild(repoName string, repoURL, contextDir string) *shipwright.Build {
 
 	build := &shipwright.Build{
 		TypeMeta:   TypeMeta("Build", "shipwright.io/v1alpha1"),
-		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "", Name: fmt.Sprintf("%v-build", repoName)}),
+		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "", Name: fmt.Sprintf("%v", repoName)}),
 		Spec: shipwright.BuildSpec{
 			Source: shipwright.Source{
 				URL:        repoURL,
@@ -42,7 +42,7 @@ func createBuild(imageRegistry, repoURL, username, repoName, secretName, context
 				Kind: &strategyKind,
 			},
 			Output: shipwright.Image{
-				Image: fmt.Sprintf("%s.io/%s/%v:latest", imageRegistry, username, repoName),
+				Image: fmt.Sprintf("%s/%s/%s:%s", imageRegistryServer, quayUsername, imageRepo, imageRepo),
 				Credentials: &corev1.LocalObjectReference{
 					Name: secretName,
 				},
@@ -53,15 +53,15 @@ func createBuild(imageRegistry, repoURL, username, repoName, secretName, context
 	return build
 }
 
-func createBuildRun(repoName string) *shipwright.BuildRun {
+func createBuildRun(buildName string) *shipwright.BuildRun {
 
 	buildRun := &shipwright.BuildRun{
 		TypeMeta: TypeMeta("BuildRun", "shipwright.io/v1alpha1"),
 		// ObjectMeta: v1.ObjectMeta{GenerateName: fmt.Sprintf("%v-buildrun-", repoName)},
-		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "default", Name: fmt.Sprintf("%v-buildrun", repoName)}),
+		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: buildSystemNamespace, Name: fmt.Sprintf("%s", buildName)}),
 		Spec: shipwright.BuildRunSpec{
 			BuildRef: &shipwright.BuildRef{
-				Name: fmt.Sprintf("%v-build", repoName),
+				Name: fmt.Sprintf("%s", buildName),
 			},
 		},
 	}
