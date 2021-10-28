@@ -27,15 +27,17 @@ func createDockerSecret(username, password, email, server string) (*corev1.Secre
 	return dockerSecret, nil
 }
 
-func createBuild(repoName string, repoURL, contextDir string) *shipwright.Build {
+func createBuild(repoName string, repoURL, contextDir string, branch string, dockerfile string) *shipwright.Build {
 
 	build := &shipwright.Build{
 		TypeMeta:   TypeMeta("Build", "shipwright.io/v1alpha1"),
 		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "", Name: fmt.Sprintf("%s", repoName)}),
 		Spec: shipwright.BuildSpec{
+			Dockerfile: &dockerfile,
 			Source: shipwright.Source{
 				URL:        repoURL,
 				ContextDir: &contextDir,
+				Revision:   &branch,
 			},
 			Strategy: &shipwright.Strategy{
 				Name: "buildpacks-v3",
