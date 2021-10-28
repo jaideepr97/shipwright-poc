@@ -31,7 +31,7 @@ func createBuild(repoName string, repoURL, contextDir string) *shipwright.Build 
 
 	build := &shipwright.Build{
 		TypeMeta:   TypeMeta("Build", "shipwright.io/v1alpha1"),
-		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "", Name: fmt.Sprintf("%v", repoName)}),
+		ObjectMeta: ObjectMeta(types.NamespacedName{Namespace: "", Name: fmt.Sprintf("%s", repoName)}),
 		Spec: shipwright.BuildSpec{
 			Source: shipwright.Source{
 				URL:        repoURL,
@@ -42,7 +42,7 @@ func createBuild(repoName string, repoURL, contextDir string) *shipwright.Build 
 				Kind: &strategyKind,
 			},
 			Output: shipwright.Image{
-				Image: fmt.Sprintf("%s/%s/%s:%s", imageRegistryServer, quayUsername, imageRepo, imageRepo),
+				Image: fmt.Sprintf("%s/%s/%s:%s", imageRegistryServer, quayUsername, imageRepo, repoName),
 				Credentials: &corev1.LocalObjectReference{
 					Name: secretName,
 				},

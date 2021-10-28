@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/wait"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
 )
@@ -38,7 +40,15 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	repoURL := r.FormValue("repo-url")
 	contextDir = r.FormValue("context-dir")
 
-	config, _ := clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+	var err error
+	config, err := rest.InClusterConfig()
+	if os.Getenv("DEVMODE") == "true" {
+		config, err = clientcmd.BuildConfigFromFlags("", kubeConfigPath)
+	}
+	if err != nil {
+		panic(err.Error())
+	}
+
 	buildClient, _ := buildClient.NewForConfig(config)
 
 	buildRequestID, _ := uuid.NewV4()
@@ -51,7 +61,7 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	buildObj := createBuild(buildRequestID.String(), repoURL, contextDir)
-	_, err := buildClient.ShipwrightV1alpha1().Builds(buildSystemNamespace).Create(context.TODO(), buildObj, v1.CreateOptions{})
+	_, err = buildClient.ShipwrightV1alpha1().Builds(buildSystemNamespace).Create(context.TODO(), buildObj, v1.CreateOptions{})
 	if err != nil {
 		log.Fatal(err)
 	}
